@@ -1,184 +1,34 @@
-https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#:~:text=Obtaining%20Elasticsearch%20for%20Docker%20is,against%20the%20Elastic%20Docker%20registry.&text=Alternatively%2C%20you%20can%20download%20other,.docker.elastic.co.
 
-    docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+1. Execute the following command from this directory
 
-run elastic docker (version 7.1.0):
+        docker-compose -f kafka-single-node.yml up -d
 
-    docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.1.0
+2. Check if the containers are up and running
+
+        docker ps
+
+
+3. To shutdown and remove the setup, execute this command in the same directory
+
+        docker-compose -f kafka-single-node.yml down
+
+
 
 # how to run the app
 
-    set ELASTIC_SEARCH_URL=https://search-my-first-cluster-34xey2vduvfmz6h3assm4gfkda.eu-central-1.es.amazonaws.com
-    set DEBUG=*
+## running publisher
+
+    ts-node src\producer.ts
+
+## running consumer
+
+    ts-node src\consumer.ts
+
       
-other ES instance:
 
-* rnd: `https://search-my-first-cluster-34xey2vduvfmz6h3assm4gfkda.eu-central-1.es.amazonaws.com`
-* dev-1: `https://esdev1.ixstack.net`
-* staging: `https://search-test-staging-es-vkhujfib64q3uset4mdxrno264.us-east-1.es.amazonaws.com`
-* staging-1: `https://esstaging1.ixstack.net`
-* qa: `https://esqa.ixstack.net`
-* production: `https://es.intelgeospatial.com`
-      
-# QUERIES
-
-to list images - including the elastic image:
-
-    docker images 
-
-
-### setting env-variables:
-
-    ELASTIC_SEARCH_URL=http://localhost:9200/
-
-// for debug():
     
-    DEBUG=*,-not_this
+    DEBUG=*
 
-
-create index:
-
-    PUT
-    /assets
-
-get indices:
-
-    GET
-    http://localhost:9200/_cat/indices
-    http://localhost:9200/_cat/indices/assets
-    
-get metadata of an index:
-
-    GET
-    http://localhost:9200/assets
-
-get *mapping* of an index (how elastic treats each field):
-
-    GET
-    http://localhost:9200/assets/_mapping
-    
-mapping:
-
-    PUT
-    http://localhost:9200/assets/
-    {
-      "mappings": {
-        "properties": {
-          "metadata": {
-           "properties": {
-            "polygon":  { "type": "geo_shape" }
-          }
-         }
-        }
-      }
-    }
-
-OR: (and this one used for *editing existing mapping*):
- 
-    PUT
-    http://localhost:9200/assets/_mapping
-    {
-        "properties": {
-          "metadata": {
-           "properties": {
-            "polygon":  { "type": "geo_shape" }
-          }
-         }
-        }
-    } 
-insert a doc:
-
-    POST
-    http://localhost:9200/assets/_doc
-    {
-            "p1":  "ohad",
-            "p2":  "redlich",
-            "p3":  "something"
-    }
-    
-insert a doc - with Polygon (geo_shape):
-    
-    POST
-    http://localhost:9200/assets/_doc
-    {
-            "polygon":  {
-               "type": "Polygon",
-               "coordinates": [
-                 [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                   [100.0, 1.0], [100.0, 0.0] ]
-                 ]
-             },
-            "p3":  "something"
-    }
-    
-get all docs:
-
-    GET/POST
-    http://localhost:9200/assets/_search
-
-**search** for docs:
-
-    POST
-    http://localhost:9200/assets/_search
-    {
-      "query": {
-        "term": {"p1": "ohad"   }
-      }
-    }
-   
-**GEO search** for docs: 
-given a polygon, seach for all polygons in the ES that intersents.
-  
-    POST
-    http://localhost:9200/assets/_search
-    {
-     "query": {
-       "geo_shape": {
-         "metadata.polygon": { 
-           "relation": "intersects",
-           "shape": {
-             "type":  "polygon",
-             "coordinates": [[[10.526270711323841,10.444489244321758],
-                             [11.925063668547947,10.371171909552444],
-                             [11.070002142972083,9.364612094349482],
-                             [10.526270711323841,10.444489244321758] ]]
-           }
-         }
-       }
-     }
-    } 
-    
-update a doc (NOTE: this is FULL update, setting new doc):
-
-    POST
-    http://localhost:9200/assets/_doc/<docId>
-    {
-            "p4":  "ohad"
-    }
-
-equivalent to node's:
-
-	await this._elasticClient.index({
-		index: ASSETS_INDEX,
-		id: assetId,
-		body: body
-	});
-
-partial update a doc:
-
-    POST
-    http://localhost:9200/assets/_update/<docId>
-    {
-            "p4":  "ohad"
-    }
-
-equivalent to node's:
-
-	await this._elasticClient.update({
-		index: ASSETS_INDEX,
-		id: assetId,
-        body: { doc: body }
-	});
 
     
 ---
