@@ -32,7 +32,7 @@
 
     
 ---
-![geo-mapping](/images/Image_5.jpg)
+![geo -mapping](/images/Image_5.jpg)
 
 ![photo explaining dynamic mapping and geo-mapping](/images/Image_6.jpg)
 
