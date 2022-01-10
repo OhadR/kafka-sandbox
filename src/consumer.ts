@@ -1,4 +1,4 @@
-import { Kafka } from 'kafkajs';
+import { EachMessagePayload, Kafka, KafkaMessage } from 'kafkajs';
 
 async function consumer() {
     const kafka = new Kafka({
@@ -14,12 +14,14 @@ async function consumer() {
     await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
 
     await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-            console.log({
-                value: message.value.toString(),
-            })
-        },
+        eachMessage: handleMessage,
     });
+}
+
+async function handleMessage(eachMessagePayload: EachMessagePayload) {
+    console.log({
+        value: eachMessagePayload.message.value.toString(),
+    })
 }
 
 consumer();
