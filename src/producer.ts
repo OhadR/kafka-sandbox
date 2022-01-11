@@ -12,24 +12,54 @@ function createMessage(num: number) {
     };
 }
 
-async function producer() {
-    const kafka = new Kafka({
-        clientId: 'my-app',
-        brokers: ['localhost:9092', 'kafka2:9092']
-    });
+function debug(msg: string) { console.log(msg); }
 
-    const producer = kafka.producer()
+export class KafkaProducer {
 
-    await producer.connect()
+    private static _instance: KafkaProducer;
+    protected producer: any;
 
-    console.log('connected');
+    protected constructor() {
 
-    await producer.send({
-        topic: 'test-topic',
-        messages: [createMessage(getRandomNumber())]
-    })
+        const kafka = new Kafka({
+            clientId: 'my-app',
+            brokers: ['localhost:9092', 'kafka2:9092']
+        });
 
-    await producer.disconnect();
+        this.producer = kafka.producer()
+    }
+
+    public static get instance() {
+        if (!KafkaProducer._instance)
+            KafkaProducer._instance = new KafkaProducer();
+
+        return KafkaProducer._instance;
+    }
+
+    public async connect() {
+
+        await this.producer.connect()
+        debug('connected');
+    }
+
+    public async disconnect() {
+
+        await this.producer.disconnect()
+        debug('disconnected');
+    }
+
+    public async send() {
+        await this.producer.send({
+            topic: 'test-topic',
+            messages: [createMessage(getRandomNumber())]
+        })
+    }
 }
 
-producer();
+async function sendMessage() {
+    await KafkaProducer.instance.connect();
+    await KafkaProducer.instance.send();
+    await KafkaProducer.instance.disconnect();
+}
+
+sendMessage();
