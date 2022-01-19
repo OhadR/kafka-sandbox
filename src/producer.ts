@@ -48,17 +48,17 @@ export class KafkaProducer {
         debug('disconnected');
     }
 
-    public async send(topicName: string) {
+    public async send(topicName: string, message: any) {
         await this.producer.send({
             topic: topicName,
-            messages: [createMessage(getRandomNumber())]
+            messages: [message]
         })
     }
 }
 
 async function sendMessage() {
     await KafkaProducer.instance.connect();
-    await KafkaProducer.instance.send('test-topic');
+    await KafkaProducer.instance.send('test-topic', createMessage(getRandomNumber()));
     await KafkaProducer.instance.disconnect();
 }
 
