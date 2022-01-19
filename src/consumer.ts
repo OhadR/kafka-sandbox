@@ -36,8 +36,8 @@ export class KafkaComsumer {
         debug('disconnected');
     }
 
-    public async listen() {
-        await this.consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
+    public async listen(topicName: string) {
+        await this.consumer.subscribe({ topic: topicName, fromBeginning: true })
 
         await this.consumer.run({
             eachMessage: handleMessage,
@@ -54,7 +54,7 @@ async function handleMessage(eachMessagePayload: EachMessagePayload) {
 
 async function consumer() {
     await KafkaComsumer.instance.connect();
-    await KafkaComsumer.instance.listen();
+    await KafkaComsumer.instance.listen('test-topic');
 }
 
 consumer();
