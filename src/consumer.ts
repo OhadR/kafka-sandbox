@@ -1,11 +1,11 @@
-import { EachMessagePayload, Kafka, KafkaMessage } from 'kafkajs';
+import { Consumer, EachMessagePayload, Kafka, KafkaMessage } from 'kafkajs';
 
 function debug(msg: string) { console.log(msg); }
 
-export class KafkaComsumer {
+export class KafkaConsumer {
 
-    private static _instance: KafkaComsumer;
-    protected consumer: any;
+    private static _instance: KafkaConsumer;
+    protected consumer: Consumer;
 
     protected constructor() {
 
@@ -18,10 +18,10 @@ export class KafkaComsumer {
     }
 
     public static get instance() {
-        if (!KafkaComsumer._instance)
-            KafkaComsumer._instance = new KafkaComsumer();
+        if (!KafkaConsumer._instance)
+            KafkaConsumer._instance = new KafkaConsumer();
 
-        return KafkaComsumer._instance;
+        return KafkaConsumer._instance;
     }
 
     public async connect() {
@@ -36,11 +36,11 @@ export class KafkaComsumer {
         debug('disconnected');
     }
 
-    public async listen(topicName: string) {
+    public async listen(topicName: string, messageHandler: (payload: EachMessagePayload) => Promise<void>) {
         await this.consumer.subscribe({ topic: topicName, fromBeginning: true })
 
         await this.consumer.run({
-            eachMessage: handleMessage,
+            eachMessage: messageHandler,
         });
     }
 }
@@ -53,8 +53,8 @@ async function handleMessage(eachMessagePayload: EachMessagePayload) {
 
 
 async function consumer() {
-    await KafkaComsumer.instance.connect();
-    await KafkaComsumer.instance.listen('test-topic');
+    await KafkaConsumer.instance.connect();
+    await KafkaConsumer.instance.listen('test-topic', handleMessage);
 }
 
 consumer();

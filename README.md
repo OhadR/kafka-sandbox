@@ -18,16 +18,14 @@
 
 ## running publisher
 
+    set DEBUG=*
     ts-node src\producer.ts
 
 ## running consumer
 
+    set DEBUG=*
     ts-node src\consumer.ts
 
-      
-
-    
-    set DEBUG=*
 
 
     
