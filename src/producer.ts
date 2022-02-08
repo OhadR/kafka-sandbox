@@ -1,5 +1,11 @@
 const { Kafka } = require('kafkajs')
 
+const dotenv = require('dotenv');
+const result = dotenv.config();
+if (result.error) {
+    throw result.error;
+}
+
 
 function getRandomNumber(): number {
     return Math.round(Math.random() * 1000)
@@ -58,7 +64,7 @@ export class KafkaProducer {
 
 async function sendMessage() {
     await KafkaProducer.instance.connect();
-    await KafkaProducer.instance.send('test-topic', createMessage(getRandomNumber()));
+    await KafkaProducer.instance.send(process.env.KAFKA_TOPIC, createMessage(getRandomNumber()));
     await KafkaProducer.instance.disconnect();
 }
 

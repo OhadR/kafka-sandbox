@@ -1,6 +1,12 @@
 import { Consumer, EachMessagePayload, Kafka, KafkaMessage } from 'kafkajs';
+const debug = require('debug')('consumer');
 
-function debug(msg: string) { console.log(msg); }
+const dotenv = require('dotenv');
+const result = dotenv.config();
+if (result.error) {
+    throw result.error;
+}
+
 
 export class KafkaConsumer {
 
@@ -14,7 +20,7 @@ export class KafkaConsumer {
             brokers: ['localhost:9092', 'kafka2:9092']
         });
 
-        this.consumer = kafka.consumer({ groupId: 'test-group' });
+        this.consumer = kafka.consumer({ groupId: process.env.KAFKA_GROUP_ID });
     }
 
     public static get instance() {
@@ -43,6 +49,8 @@ export class KafkaConsumer {
             eachMessage: messageHandler,
         });
     }
+
+
 }
 
 async function handleMessage(eachMessagePayload: EachMessagePayload) {
@@ -54,7 +62,8 @@ async function handleMessage(eachMessagePayload: EachMessagePayload) {
 
 async function consumer() {
     await KafkaConsumer.instance.connect();
-    await KafkaConsumer.instance.listen('test-topic', handleMessage);
+    // await KafkaConsumer.instance.listen('test-topic', handleMessage);
+    await KafkaConsumer.instance.listen(process.env.KAFKA_TOPIC, handleMessage);
 }
 
 consumer();

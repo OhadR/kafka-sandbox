@@ -6,7 +6,7 @@ In this chapter, we will explore a number of basic concepts and entities that ma
 
 ### Topics
 
-- [Narrator] Topics in Kafka hold and manage messages. Let's explore more on topics in this video. A topic in Kafka is an entity that holds messages. It's similar to a file that contains papers. When messages represent the papers, it's similar to a database table that contains records, where messages represent the records. Topics can be considered as a queue, for similar messages. A topic itself does not pose any limitation, on what the content of its message should be. So technically, a topic can contain all kinds of messages with different formats, but in practice, they're used to hold similar messages. What does similar mean in this case? Usually, the content of the messages are similar and have the same set of producers and consumers. Examples of topics include; sales transactions, audit logs, video files, etcetera. Kafka support multiple topics, per Kafka instance. So topics can be created based on specific use cases. And multiple application domains can create topics, in the same Kafka instance. Each topic support multiple producers to publish data to the topic concurrently. Similarly, multiple consumers can consume data from this topic. Each topic has multiple partitions that physically split data across multiple files. Here is an example of how topics exist in Kafka. In this case, we have one Kafka instance with two topics, orders and logs. The orders topic has three partitions, P1, P2 and P3. There are eight messages in the topic named M1 to M8. The messages are distributed across three partitions. Each message, will only be stored in one partition. Similarly, the logs topic has two partitions and six messages. We will discuss partitions in detail, later in the course. In the next video, let's discuss Kafka brokers.
+Topics in Kafka hold and manage messages. Let's explore more on topics in this video. A topic in Kafka is an entity that holds messages. It's similar to a file that contains papers. When messages represent the papers, it's similar to a database table that contains records, where messages represent the records. Topics can be considered as a queue, for similar messages. A topic itself does not pose any limitation, on what the content of its message should be. So technically, a topic can contain all kinds of messages with different formats, but in practice, they're used to hold similar messages. What does similar mean in this case? Usually, the content of the messages are similar and have the same set of producers and consumers. Examples of topics include; sales transactions, audit logs, video files, etcetera. Kafka support multiple topics, per Kafka instance. So topics can be created based on specific use cases. And multiple application domains can create topics, in the same Kafka instance. Each topic support multiple producers to publish data to the topic concurrently. Similarly, multiple consumers can consume data from this topic. Each topic has multiple partitions that physically split data across multiple files. Here is an example of how topics exist in Kafka. In this case, we have one Kafka instance with two topics, orders and logs. The orders topic has three partitions, P1, P2 and P3. There are eight messages in the topic named M1 to M8. The messages are distributed across three partitions. Each message, will only be stored in one partition. Similarly, the logs topic has two partitions and six messages. We will discuss partitions in detail, later in the course. In the next video, let's discuss Kafka brokers.
 
 ### Kafka Brokers
 
@@ -16,11 +16,20 @@ In addition, each partition will have a corresponding Kafka broker as its leader
 
 ### kafka logs
 
- Where does the data that is sent by producers stored physically? It is in the Kafka logs. Kafka logs are the physical files in which data is stored before they are consumed by the consumers. Logs are managed by Kafka brokers. Each broker has an assigned log directory where it stores the log files. There are multiple log files created in Kafka. Each broker will have its own log territory. And in these directory, there are separate files for each topic and partition. These are rolling files so when a file gets filled up it's rolled over and a new file is created to continue with the logging process. So each partition will have multiple log files in the log directory. Data in Kafka is only kept for a configured interval of time. The default is seven days. A separate thread in Kafka keeps pruning files that are over this period. Log files are an important consideration for managing a Kafka instance since they influence the amount of physical space that needs to be provisioned. 
- Lack of space would lead to the broker rejecting data from producers and a breakdown of data processing pipelines. 
- All configuration for Kafka is in the server.properties file under the conflict folder of the Kafka installation root folder. 
- The log.dirs parameter is used to set the path of the log directory. 
- Now, let's explore more around the producers and consumers in the next video.
+Where does the data that is sent by producers stored physically? It is in the Kafka logs. Kafka logs are the physical files 
+in which data is stored before they are consumed by the consumers. Logs are managed by Kafka brokers. Each broker has an 
+assigned log directory where it stores the log files. There are multiple log files created in Kafka. Each broker will have 
+its own log territory. And in these directory, there are separate files for each topic and partition. These are rolling 
+files so when a file gets filled up it's rolled over and a new file is created to continue with the logging process. So 
+each partition will have multiple log files in the log directory. 
+
+Data in Kafka is only kept for a configured interval of time. The default is seven days. A separate thread in Kafka keeps 
+pruning files that are over this period. Log files are an important consideration for managing a Kafka instance since they 
+influence the amount of physical space that needs to be provisioned. 
+ 
+Lack of space would lead to the broker rejecting data from producers and a breakdown of data processing pipelines. 
+All configuration for Kafka is in the server.properties file under the conflict folder of the Kafka installation root folder. 
+The log.dirs parameter is used to set the path of the log directory. 
 
 ### Producers and consumers
 
@@ -61,7 +70,7 @@ The Kafka topics.sh shell script can also be used to modify and delete topics. R
 
 ### Kafka setup
 
-- [Instructor] In this video, we will review the Kafka setup and see how things are organized inside Kafka. Let's first start from zookeeper. We will log in to the Docker instance of the zookeeper container using docker exec -it zookeeper /bin/bash. Once inside the zookeeper, let's navigate to the zookeeper bin directory. The bin directory is /opt/bitnami/zookeeper/bin. Once inside here, let us execute the zookeeper client. We are now logged in to the zookeeper client. Let us clear the screen for now. Kafka creates multiple zookeeper nodes to keep track of its configuration and status. Running ls / command shows all the various nodes available. Running ls /brokers/ids shows all the brokers that are registered with zookeeper. We only have one Kafka broker registered for now, which is 1001. Executing a get /brokers/ids/1001 shows further details about the specific broker. 
+In this video, we will review the Kafka setup and see how things are organized inside Kafka. Let's first start from zookeeper. We will log in to the Docker instance of the zookeeper container using docker exec -it zookeeper /bin/bash. Once inside the zookeeper, let's navigate to the zookeeper bin directory. The bin directory is /opt/bitnami/zookeeper/bin. Once inside here, let us execute the zookeeper client. We are now logged in to the zookeeper client. Let us clear the screen for now. Kafka creates multiple zookeeper nodes to keep track of its configuration and status. Running ls / command shows all the various nodes available. Running ls /brokers/ids shows all the brokers that are registered with zookeeper. We only have one Kafka broker registered for now, which is 1001. Executing a get /brokers/ids/1001 shows further details about the specific broker. 
 
 ## 4. Kafka Partitions and Groups
 
