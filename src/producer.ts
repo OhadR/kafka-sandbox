@@ -13,9 +13,17 @@ function getRandomNumber(): number {
 }
 
 function createMessage(num: number) {
+    let messageValue = {
+        id: num,
+        index: 'ohad-index',
+        type: 'ohad-type',
+        doc: { ohads: `value-${num}-${new Date().toISOString()}`
+    }
+    };
+
     return {
         key: `key-${num}`,
-        value: `value-${num}-${new Date().toISOString()}`,
+        value: JSON.stringify(messageValue),
     };
 }
 
