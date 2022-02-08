@@ -1,4 +1,5 @@
 const { Kafka } = require('kafkajs')
+const debug = require('debug')('producer');
 
 const dotenv = require('dotenv');
 const result = dotenv.config();
@@ -17,8 +18,6 @@ function createMessage(num: number) {
         value: `value-${num}-${new Date().toISOString()}`,
     };
 }
-
-function debug(msg: string) { console.log(msg); }
 
 export class KafkaProducer {
 
